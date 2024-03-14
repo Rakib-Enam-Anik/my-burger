@@ -11,8 +11,8 @@ const controls = [
 
 const BuildControl = props => {
     return (
-        <div>
-            <div>{props.label}</div>
+        <div className="d-flex ">
+            <div className="mr-auto ml-5">{props.label}</div>
             <button>Less</button>
             <button>More</button>
         </div>
