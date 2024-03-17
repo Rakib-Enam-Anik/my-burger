@@ -4,10 +4,11 @@ import {
     Navbar,
     NavbarBrand,
     Nav,
-    NavItem,
-    NavLink,
+    NavItem
+  
 } from 'reactstrap';
 import Logo from '../../assets/logo.png';
+import { NavLink } from 'react-router-dom';
 
 const Header = () => {
     return (
@@ -19,12 +20,15 @@ const Header = () => {
                 <NavbarBrand href="/" className="mr-auto ml-md-5 Brand"><img src={Logo} alt={Logo} width="60px" /></NavbarBrand>
                 <Nav className="mr-md-5">
                     <NavItem>
-                        <NavLink href="#" className='NavLink'>Something</NavLink>
+                        <NavLink to="/" className='NavLink'>Burger Builder</NavLink>
+                    </NavItem>
+                    <NavItem>
+                        <NavLink to="/orders" className='NavLink'>Orders</NavLink>
                     </NavItem>
                 </Nav>
             </Navbar>
         </div>
-    )
+    );
 }
 
 export default Header;
