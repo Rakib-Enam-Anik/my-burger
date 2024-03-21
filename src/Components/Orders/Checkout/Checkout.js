@@ -8,7 +8,7 @@ import { useNavigate } from "react-router-dom";
 import axios from 'axios';
 
 
-const mapStateTopProps = state => {
+const mapStateToProps = state => {
     return {
         ingredients: state.ingredients,
         totalPrice: state.totalPrice,
@@ -28,9 +28,7 @@ class Checkout extends Component  {
      
     goBack = () => {
         
-        //this.props.history.goBack("/");
-        const navigate = useNavigate();
-        navigate("-1");
+        this.props.navigate("-1");
     }
 
     inputChangerHandler = (e) => {
@@ -93,5 +91,10 @@ class Checkout extends Component  {
     }
 }
 
-export default connect(mapStateTopProps)(Checkout);
+function WithNavigate(props) {
+    let navigate = useNavigate();
+    return <Checkout {...props} navigate={navigate} />;
+  }
+
+export default connect(mapStateToProps)(WithNavigate);
 
