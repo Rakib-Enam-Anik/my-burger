@@ -37,7 +37,7 @@ class Checkout extends Component  {
      
     goBack = () => {
         
-        this.props.navigate("-1");
+        this.props.navigate("/");
     }
 
     inputChangerHandler = (e) => {
