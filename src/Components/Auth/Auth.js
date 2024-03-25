@@ -109,7 +109,7 @@ class Auth extends Component {
                     <br />
 
                     {
-                    this.state.mode=="Sign Up"? <div>
+                    this.state.mode==="Sign Up"? <div>
                     <input 
                     name="passwordConfirm"
                     placeholder=" Confirm Password"
@@ -122,8 +122,8 @@ class Auth extends Component {
                     </div>:null
                     }
                  
-                    <button type="submit" className="btn btn-success">{this.
-                    state.mode === "Sign Up" ? "Sign Up" : "Login"}</button>
+                    <button type="submit" className="btn btn-success">{this
+                    .state.mode === "Sign Up" ? "Sign Up" : "Login"}</button>
                     </form>
                     </div>)}
                 

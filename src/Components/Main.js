@@ -1,26 +1,41 @@
 import React from 'react';
 import Header from './Header/Header';
 import BurgerBuilder from './BurgerBuilder/BurgerBuilder';
-import { Route, Routes } from 'react-router-dom';
 import Orders from './Orders/Orders';
 import Checkout from './Orders/Checkout/Checkout';
 import Auth from './Auth/Auth';
+import { Routes, Route, Navigate } from 'react-router-dom';
+import { connect } from 'react-redux';
 
-const Main = props => {
+const mapStateToProps = state => {
+    return {
+        token: state.token,
+    }
+}
+
+const Main = ({ token }) => {
     return (
         <div>
-            <Header/>
+            <Header />
             <div className="container">
                 <Routes>
-                    <Route path="/orders" element={<Orders />} />
-                    <Route path="/checkout" element={<Checkout />} /> 
-                    <Route path="/login" element={<Auth />} /> 
-                    <Route path="/" element={<BurgerBuilder /> } />
+                    {token === null ? (
+                        <>
+                            <Route path="/login" element={<Auth />} />
+                            <Route path="/" element={<Navigate to="/login" />} />
+                        </>
+                    ) : (
+                        <>
+                            <Route path="/orders" element={<Orders />} />
+                            <Route path="/checkout" element={<Checkout />} />
+                            <Route path="/" element={<BurgerBuilder />} />
+                            <Route path="/" element={<Navigate to="/" />} />
+                        </>
+                    )}
                 </Routes>
-             </div>
-            
+            </div>
         </div>
     )
 }
 
-export default Main;
+export default connect(mapStateToProps)(Main);
