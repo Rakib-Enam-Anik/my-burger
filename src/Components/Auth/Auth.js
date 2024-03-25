@@ -1,11 +1,19 @@
 import React, { Component } from 'react';
 import { Formik } from 'formik';
+import {auth} '../../redux/authActionCreators';
 
 
 class Auth extends Component {
     state = {
         mode: "Sign Up"
     }
+    
+    switchModeHandler = () => {
+        this.setState({
+            mode: this.state.mode === "Sign Up"? "Log In" : "Sign Up"
+        })
+    }
+
     render() {
         return (
             <div>
@@ -38,12 +46,18 @@ class Auth extends Component {
                     } else if (values.password.length < 4) {
                         errors.password = 'Must be at least 4 characters!';
                     }
+                    
+                    if(this.state.mode === "Sign Up"){
 
-                    if (!values.passwordConfirm) {
-                        errors.passwordConfirm = 'Required';
-                    } else if (values.password.length !== values.passwordConfirm){
-                        errors.passwordConfirm = 'Must be at least 4 characters!';
+                        if (!values.passwordConfirm) {
+                            errors.passwordConfirm = 'Required';
+                        } else if (values.password.length !== values.passwordConfirm){
+                            errors.passwordConfirm = 'Must be at least 4 characters!';
+                        }
+
                     }
+
+                   
                     
                     console.log("Errors:", errors)
                     return errors;
@@ -56,7 +70,14 @@ class Auth extends Component {
                     padding: "15px",
                     borderRadius: "7px",
                 }}> 
-                    <button>Switch To {this.state.mode==="Sign Up"} </button>
+                    <button style={{
+                        width: "100%",
+                        backgroundColor: "#D70F64",
+                        color:"white",
+
+                    }} className="btn btn-lg" onClick={this.switchModeHandler}>Switch To {this.state.mode==="Sign Up" ? "Login" : "Sign Up"} </button>
+                    <br></br>
+                    <br></br>
                     <form onSubmit={handleSubmit}>
                     <input 
                     name="email"
@@ -76,6 +97,9 @@ class Auth extends Component {
                     />
                       <span style={{ color: "red"}}>{errors.password}</span>
                     <br />
+
+                    {
+                    this.state.mode=="Sign Up"? <div>
                     <input 
                     name="passwordConfirm"
                     placeholder=" Confirm Password"
@@ -85,7 +109,11 @@ class Auth extends Component {
                     />
                      <span style={{ color: "red"}}>{errors.passwordConfirm}</span>
                     <br />
-                    <button type="submit" className="btn btn-success">Sign Up</button>
+                    </div>:null
+                    }
+                 
+                    <button type="submit" className="btn btn-success">{this.
+                    state.mode === "Sign Up" ? "Sign Up" : "Login"}</button>
                     </form>
                     </div>)}
                 
