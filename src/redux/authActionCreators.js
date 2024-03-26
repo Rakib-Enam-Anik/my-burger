@@ -2,7 +2,7 @@ import * as actionTypes from './actionTypes';
 import axios from 'axios';
 
 
-export const authSucccess = (token, userId) => {
+export const authSuccess = (token, userId) => {
     return {
         type: actionTypes.AUTH_SUCCESS,
         payload: {
@@ -12,7 +12,23 @@ export const authSucccess = (token, userId) => {
     }
 }
 
+export const authLoading = isLoading => {
+   
+    return{
+        type: actionTypes.AUTH_LOADING,
+        payload: isLoading,
+    }
+}
+
+export const authFailed = errMsg => {
+    return{
+        type: actionTypes.AUTH_FAILED,
+        payload: errMsg,
+    }
+}
+
 export const auth = (email, password, mode) => dispatch => {
+    dispatch(authLoading(true));
     const authData = {
         email: email,
         password: password,
@@ -28,6 +44,42 @@ export const auth = (email, password, mode) => dispatch => {
     const API_KEY = "AIzaSyABkOrQBoXn0SgwMJ4oohrIFLxluiQ_mRo";
     axios.post(authUrl + API_KEY, authData)
     .then (response => {
-        dispatch(authSucccess(response.data.idToken, response.data.localId));
+        dispatch(authLoading(false));
+        localStorage.setItem('token', response.data.idToken);
+        localStorage.setItem('userId', response.data.localId);
+        const expirationTime = new Date (new Date().getTime() + response.data.expiresIn * 1000);
+        localStorage.setItem('expirationTime', expirationTime);
+        dispatch(authSuccess(response.data.idToken, response.data.localId));
     })
+    .catch(err => {
+        dispatch(authLoading(false));
+        dispatch(authFailed(err.response.data.error.message));
+    })
+}
+
+export const logout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('userId');
+    localStorage.removeItem('expirationTime');
+    return {
+        type: actionTypes.AUTH_LOGOUT
+    }
+}
+
+export const authCheck = () => dispatch => {
+    const token = localStorage.getItem('token');
+    if(!token) {
+        dispatch(logout());
+        return;
+    } else {
+        const expirationTime = new Date(localStorage.getItem('expirationTime'));
+        if(expirationTime <= new Date()) {
+            // Logout
+            dispatch(logout());
+    }else {
+        const userId = localStorage.getItem('userId');
+        dispatch(authSuccess(token, userId));
+    }
+}
+
 }
