@@ -1,0 +1,13 @@
+{
+	"folders": [
+		{
+			"name": "src",
+			"path": "."
+		},
+		{
+			"name": "burger-builder",
+			"path": "../../burger-builder"
+		}
+	],
+	"settings": {}
+}
