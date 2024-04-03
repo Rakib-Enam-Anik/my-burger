@@ -22,7 +22,7 @@ const INITIAL_STATE = {
     token: null,
     userId: null,
     authLoading: false,
-    authFailed: null,
+    authFailedMsg: null,
 }
 
 export const reducer = (state = INITIAL_STATE, action) => {

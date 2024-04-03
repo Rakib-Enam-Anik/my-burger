@@ -1,5 +1,10 @@
 import * as actionTypes from './actionTypes';
 import axios from 'axios';
+import jwt_decode from 'jwt-decode';
+//import { jwtDecode } from 'jwt-decode';
+
+// Now you can use jwtDecode function
+
 
 
 export const authSuccess = (token, userId) => {
@@ -46,11 +51,13 @@ export const auth = (email, password, mode) => dispatch => {
     .then (response => {
         dispatch(authLoading(false));
         console.log(response);
-        //localStorage.setItem('token', response.data.idToken);
-        //localStorage.setItem('userId', response.data.localId);
-        //const expirationTime = new Date (new Date().getTime() + response.data.expiresIn * 1000);
-        //localStorage.setItem('expirationTime', expirationTime);
-        //dispatch(authSuccess(response.data.idToken, response.data.localId));
+        const token = jwt_decode(response.data.access)
+        console.log(token);
+        localStorage.setItem('token', response.data.access);
+        localStorage.setItem('userId', token.user_id);
+        const expirationTime = new Date(token.exp * 1000);
+        localStorage.setItem('expirationTime', expirationTime);
+        dispatch(authSuccess(response.data.access, token.user_id));
     })
     .catch(err => {
         dispatch(authLoading(false));
