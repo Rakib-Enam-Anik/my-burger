@@ -36,8 +36,8 @@ class Auth extends Component {
     render() {
         
         let err = null;
-        if(this.props.authFailedMsg!==null){
-            err = <Alert color="danger">{this.props.authFailedMsg}</Alert>
+        if(this.props.authFailedMsg !==null ){
+            err = <Alert color="danger"> { this.props.authFailedMsg } </Alert>
         }
 
         let form = null;

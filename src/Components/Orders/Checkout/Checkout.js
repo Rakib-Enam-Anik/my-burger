@@ -53,17 +53,22 @@ class Checkout extends Component  {
 
     submitHandler = () => {
         this.setState({ isLoading: true });
+        const url = "http://127.0.0.1:8000/api/orders/";
+        const ingredients = [...this.props.ingredients]
+        const ingredientsObject = {}
+        for (let i in ingredients){
+            ingredientsObject[i.type] = i.amount;
+        }
         const order = {
-            ingredients: this.props.ingredients,
+            ingredients: ingredientsObject,
             customer: this.state.values,
             price: this.props.totalPrice,
             orderTime: new Date(),
-            userId: this.props.userId,
+            user: this.props.userId,
         }
-        axios.post("https://burger-builder-40852-default-rtdb.firebaseio.com/orders.json?auth=" + this
-        .props.token, order)
+        axios.post(url, order)
         .then(response=> {
-            if(response.status === 200) {
+            if(response.status === 201) {
                 this.setState({
                     isLoading: false,
                     isModalOpen: true,

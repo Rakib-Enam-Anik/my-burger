@@ -1,11 +1,6 @@
 import * as actionTypes from './actionTypes';
 import axios from 'axios';
-import jwt_decode from 'jwt-decode';
-//import { jwtDecode } from 'jwt-decode';
-
-// Now you can use jwtDecode function
-
-
+import { jwtDecode } from 'jwt-decode'; // Corrected import statement
 
 export const authSuccess = (token, userId) => {
     return {
@@ -18,18 +13,27 @@ export const authSuccess = (token, userId) => {
 }
 
 export const authLoading = isLoading => {
-   
-    return{
+    return {
         type: actionTypes.AUTH_LOADING,
         payload: isLoading,
     }
 }
 
 export const authFailed = errMsg => {
-    return{
+    return {
         type: actionTypes.AUTH_FAILED,
         payload: errMsg,
     }
+}
+
+const saveTokenDataAndGetUserID = access => {
+    const token = jwtDecode(access); // Corrected function call
+        console.log(token);
+        localStorage.setItem('token', access);
+        localStorage.setItem('userId', token.user_id);
+        const expirationTime = new Date(token.exp * 1000);
+        localStorage.setItem('expirationTime', expirationTime);
+        return token.user_id;
 }
 
 export const auth = (email, password, mode) => dispatch => {
@@ -37,32 +41,37 @@ export const auth = (email, password, mode) => dispatch => {
     const authData = {
         email: email,
         password: password,
-       
     }
     
     let authUrl = null;
-    if (mode === "Sign Up"){
-        authUrl = "http://127.0.0.1:8000/api/users/" ;
+    if (mode === "Sign Up") {
+        authUrl = "http://127.0.0.1:8000/api/users/";
     } else {
-        authUrl = "http://127.0.0.1:8000/api/token/" ;
+        authUrl = "http://127.0.0.1:8000/api/token/";
     }
     
     axios.post(authUrl, authData)
-    .then (response => {
+    .then(response => {
         dispatch(authLoading(false));
-        console.log(response);
-        const token = jwt_decode(response.data.access)
-        console.log(token);
-        localStorage.setItem('token', response.data.access);
-        localStorage.setItem('userId', token.user_id);
-        const expirationTime = new Date(token.exp * 1000);
-        localStorage.setItem('expirationTime', expirationTime);
-        dispatch(authSuccess(response.data.access, token.user_id));
+        if(mode !== "Sign Up") {
+            const access = response.data.access
+            const user_id = saveTokenDataAndGetUserID(access);
+            dispatch(authSuccess(access, user_id));
+        } else {
+            return axios.post("http://127.0.0.1:8000/api/token/", authData)
+            .then(response => {
+                const access = response.data.access
+                const user_id = saveTokenDataAndGetUserID(access);
+                dispatch(authSuccess(access, user_id));
+            })
+        }
+        
+        
     })
     .catch(err => {
         dispatch(authLoading(false));
-        const key = Object.keys(err.response.data)[0]
-        const errorValue = err.response.data[key]
+        const key = Object.keys(err.response.data)[0];
+        const errorValue = err.response.data[key];
 
         dispatch(authFailed(`${errorValue}`));
     })
@@ -79,19 +88,19 @@ export const logout = () => {
 
 export const authCheck = () => dispatch => {
     const token = localStorage.getItem('token');
-    if(!token) {
+    if (!token) {
         // Logout
         dispatch(logout());
     } else {
         const expirationTime = new Date(localStorage.getItem('expirationTime'));
-        if(expirationTime <= new Date()) {
+        if (expirationTime <= new Date()) {
             // Logout
             dispatch(logout());
-    } else {
-        const userId = localStorage.getItem('userId');
-        dispatch(authSuccess(token, userId));
+        } else {
+            const userId = localStorage.getItem('userId');
+            dispatch(authSuccess(token, userId));
+        }
     }
 }
 
-}
 
